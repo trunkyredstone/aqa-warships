@@ -14,19 +14,41 @@ Module Module1
         Dim Size As Integer
     End Structure
 
-    Sub GetRowColumn(ByRef Row As Integer, ByRef Column As Integer)
+    Sub GetRowColumn(ByRef Row As Integer, ByRef Column As Integer, ByRef Board(,) As Char)
         Console.WriteLine()
-        Console.Write("Please enter column: ")
-        Column = Console.ReadLine()
-        Console.Write("Please enter row: ")
-        Row = Console.ReadLine()
+        Dim gotInput = False
+        
+        Do Until Column >= 0 And Column < Board.GetLength(1) And gotInput
+            Try
+                gotInput = False
+                Console.Write("Please enter column: ")
+                Column = Console.ReadLine()
+                gotInput = True
+            Catch
+                Console.WriteLine("Please enter an integer")
+            End Try
+        Loop
+
+        gotInput = False
+        
+        Do Until Row >= 0 And Row < Board.GetLength(0) And gotInput
+            Try
+                gotInput = False
+                Console.Write("Please enter row: ")
+                Row = Console.ReadLine()
+                gotInput = True
+            Catch
+                Console.WriteLine("Please enter an integer")
+            End Try
+        Loop
+        
         Console.WriteLine()
     End Sub
 
     Sub MakePlayerMove(ByRef Board(,) As Char, ByRef Ships() As TShip)
         Dim Row As Integer
         Dim Column As Integer
-        GetRowColumn(Row, Column)
+        GetRowColumn(Row, Column, Board)
         If Board(Row, Column) = "m" Or Board(Row, Column) = "h" Then
             Console.WriteLine(
                 "Sorry, you have already shot at the square (" & Column & "," & Row & "). Please try again.")
