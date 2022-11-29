@@ -182,10 +182,17 @@ Module Module1
 
     Function GetMainMenuChoice()
         Dim Choice As Integer
-        Console.Write("Please enter your choice: ")
-        Choice = Console.ReadLine()
-        Console.WriteLine()
-        Return Choice
+        
+        Do
+            Try
+                Console.Write("Please enter your choice: ")
+                Choice = Console.ReadLine()
+                Console.WriteLine()
+                Return Choice
+            Catch
+                Console.WriteLine("Please enter an integer")
+            End Try
+        Loop
     End Function
 
     Sub PlayGame(Board(,) As Char, Ships() As TShip)
