@@ -162,7 +162,7 @@ Module Module1
         Return True
     End Function
 
-    Private Sub PrintBoard(board(,) As Char)
+    Private Sub PrintBoard(board(,) As Char, showShips As Boolean)
         Dim row As Integer
         Dim column As Integer
         Console.WriteLine()
@@ -181,7 +181,11 @@ Module Module1
                 ElseIf _
                     board(row, column) = "A" Or board(row, column) = "B" Or board(row, column) = "S" Or
                     board(row, column) = "D" Or board(row, column) = "P" Then
-                    Console.Write(" ")
+                    If showShips Then
+                        Console.Write(board(row, column))
+                    Else
+                        Console.Write(" ")
+                    End If
                 Else
                     Console.Write(board(row, column))
                 End If
@@ -217,10 +221,10 @@ Module Module1
         Loop
     End Function
 
-    Private Sub PlayGame(board(,) As Char, ships() As Ship)
+    Private Sub PlayGame(board(,) As Char, ships() As Ship, showShips As Boolean)
         Dim gameWon As Boolean
         Do
-            PrintBoard(board)
+            PrintBoard(board, showShips)
             MakePlayerMove(board, ships)
             gameWon = CheckWin(board)
             If gameWon Then
@@ -254,10 +258,10 @@ Module Module1
             menuOption = GetMainMenuChoice()
             If menuOption = 1 Then
                 PlaceRandomShips(board, ships)
-                PlayGame(board, ships)
+                PlayGame(board, ships, False)
             ElseIf menuOption = 2 Then
                 LoadGame(TrainingGame, board)
-                PlayGame(board, ships)
+                PlayGame(board, ships, True)
             End If
         Loop Until menuOption = 9
     End Sub
