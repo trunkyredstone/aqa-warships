@@ -9,20 +9,20 @@ Imports System.IO
 Module Module1
     Const TrainingGame As String = "Training.txt"
 
-    Structure TShip
+    Structure Ship
         Dim Name As String
         Dim Size As Integer
     End Structure
 
-    Sub GetRowColumn(ByRef Row As Integer, ByRef Column As Integer, ByRef Board(,) As Char)
+    Private Sub GetRowColumn(ByRef row As Integer, ByRef column As Integer, ByRef board(,) As Char)
         Console.WriteLine()
         Dim gotInput = False
         
-        Do Until Column >= 0 And Column < Board.GetLength(1) And gotInput
+        Do Until column >= 0 And column < board.GetLength(1) And gotInput
             Try
                 gotInput = False
                 Console.Write("Please enter column: ")
-                Column = Console.ReadLine()
+                column = Console.ReadLine()
                 gotInput = True
             Catch
                 Console.WriteLine("Please enter an integer")
@@ -31,11 +31,11 @@ Module Module1
 
         gotInput = False
         
-        Do Until Row >= 0 And Row < Board.GetLength(0) And gotInput
+        Do Until row >= 0 And row < board.GetLength(0) And gotInput
             Try
                 gotInput = False
                 Console.Write("Please enter row: ")
-                Row = Console.ReadLine()
+                row = Console.ReadLine()
                 gotInput = True
             Catch
                 Console.WriteLine("Please enter an integer")
@@ -45,100 +45,100 @@ Module Module1
         Console.WriteLine()
     End Sub
 
-    Sub MakePlayerMove(ByRef Board(,) As Char, ByRef Ships() As TShip)
-        Dim Row As Integer
-        Dim Column As Integer
-        GetRowColumn(Row, Column, Board)
-        If Board(Row, Column) = "m" Or Board(Row, Column) = "h" Then
+    Private Sub MakePlayerMove(ByRef board(,) As Char, ByRef ships() As Ship)
+        Dim row As Integer
+        Dim column As Integer
+        GetRowColumn(row, column, board)
+        If board(row, column) = "m" Or board(row, column) = "h" Then
             Console.WriteLine(
-                "Sorry, you have already shot at the square (" & Column & "," & Row & "). Please try again.")
-        ElseIf Board(Row, Column) = "-" Then
-            Console.WriteLine("Sorry, (" & Column & "," & Row & ") is a miss.")
-            Board(Row, Column) = "m"
+                "Sorry, you have already shot at the square (" & column & "," & row & "). Please try again.")
+        ElseIf board(row, column) = "-" Then
+            Console.WriteLine("Sorry, (" & column & "," & row & ") is a miss.")
+            board(row, column) = "m"
         Else
-            Console.WriteLine("Hit at (" & Column & "," & Row & ").")
-            Board(Row, Column) = "h"
+            Console.WriteLine("Hit at (" & column & "," & row & ").")
+            board(row, column) = "h"
         End If
     End Sub
 
-    Sub SetUpBoard(ByRef Board(,) As Char)
-        Dim Row As Integer
-        Dim Column As Integer
-        For Row = 0 To 9
-            For Column = 0 To 9
-                Board(Row, Column) = "-"
+    Private Sub SetUpBoard(ByRef board(,) As Char)
+        Dim row As Integer
+        Dim column As Integer
+        For row = 0 To 9
+            For column = 0 To 9
+                board(row, column) = "-"
             Next
         Next
     End Sub
 
-    Sub LoadGame(Filename As String, ByRef Board(,) As Char)
-        Dim Row As Integer
-        Dim Column As Integer
-        Dim Line As String
-        Using FileReader = New StreamReader(Filename)
-            For Row = 0 To 9
-                Line = FileReader.ReadLine()
-                For Column = 0 To 9
-                    Board(Row, Column) = Line(Column)
+    Private Sub LoadGame(filename As String, ByRef board(,) As Char)
+        Dim row As Integer
+        Dim column As Integer
+        Dim line As String
+        Using fileReader = New StreamReader(filename)
+            For row = 0 To 9
+                line = fileReader.ReadLine()
+                For column = 0 To 9
+                    board(row, column) = line(column)
                 Next
             Next
         End Using
     End Sub
 
-    Sub PlaceRandomShips(ByRef Board(,) As Char, Ships() As TShip)
-        Dim Valid As Boolean
-        Dim Row As Integer
-        Dim Column As Integer
-        Dim Orientation As Char
-        Dim HorV As Integer
-        For Each Ship In Ships
-            Valid = False
-            While Not Valid
-                Row = Int(Rnd()*10)
-                Column = Int(Rnd()*10)
-                HorV = Int(Rnd()*2)
-                If HorV = 0 Then
-                    Orientation = "v"
+    Private Sub PlaceRandomShips(ByRef board(,) As Char, ships() As Ship)
+        Dim valid As Boolean
+        Dim row As Integer
+        Dim column As Integer
+        Dim orientation As Char
+        Dim horV As Integer
+        For Each Ship In ships
+            valid = False
+            While Not valid
+                row = Int(Rnd()*10)
+                column = Int(Rnd()*10)
+                horV = Int(Rnd()*2)
+                If horV = 0 Then
+                    orientation = "v"
                 Else
-                    Orientation = "h"
+                    orientation = "h"
                 End If
-                Valid = ValidateBoatPosition(Board, Ship, Row, Column, Orientation)
+                valid = ValidateBoatPosition(board, Ship, row, column, orientation)
             End While
             Console.WriteLine("Computer placing the " & Ship.Name)
-            PlaceShip(Board, Ship, Row, Column, Orientation)
+            PlaceShip(board, Ship, row, column, orientation)
         Next
     End Sub
 
-    Sub PlaceShip(ByRef Board(,) As Char, Ship As TShip, Row As Integer, Column As Integer, Orientation As Char)
-        Dim Scan As Integer
-        If Orientation = "v" Then
-            For Scan = 0 To Ship.Size - 1
-                Board(Row + Scan, Column) = Ship.Name(0)
+    Private Sub PlaceShip(ByRef board(,) As Char, ship As Ship, row As Integer, column As Integer, orientation As Char)
+        Dim scan As Integer
+        If orientation = "v" Then
+            For scan = 0 To ship.Size - 1
+                board(row + scan, column) = ship.Name(0)
             Next
-        ElseIf Orientation = "h" Then
-            For Scan = 0 To Ship.Size - 1
-                Board(Row, Column + Scan) = Ship.Name(0)
+        ElseIf orientation = "h" Then
+            For scan = 0 To ship.Size - 1
+                board(row, column + scan) = ship.Name(0)
             Next
         End If
     End Sub
 
-    Function ValidateBoatPosition(Board(,) As Char, Ship As TShip, Row As Integer, Column As Integer,
-                                  Orientation As Char)
-        Dim Scan As Integer
-        If Orientation = "v" And Row + Ship.Size > 10 Then
+    Private Function ValidateBoatPosition(board(,) As Char, ship As Ship, row As Integer, column As Integer,
+                                  orientation As Char)
+        Dim scan As Integer
+        If orientation = "v" And row + ship.Size > 10 Then
             Return False
-        ElseIf Orientation = "h" And Column + Ship.Size > 10 Then
+        ElseIf orientation = "h" And column + ship.Size > 10 Then
             Return False
         Else
-            If Orientation = "v" Then
-                For Scan = 0 To Ship.Size - 1
-                    If Board(Row + Scan, Column) <> "-" Then
+            If orientation = "v" Then
+                For scan = 0 To ship.Size - 1
+                    If board(row + scan, column) <> "-" Then
                         Return False
                     End If
                 Next
-            ElseIf (Orientation = "h") Then
-                For Scan = 0 To Ship.Size - 1
-                    If Board(Row, Column + Scan) <> "-" Then
+            ElseIf (orientation = "h") Then
+                For scan = 0 To ship.Size - 1
+                    If board(row, column + scan) <> "-" Then
                         Return False
                     End If
                 Next
@@ -147,14 +147,14 @@ Module Module1
         Return True
     End Function
 
-    Function CheckWin(Board(,) As Char)
-        Dim Row As Integer
-        Dim Column As Integer
-        For Row = 0 To 9
-            For Column = 0 To 9
+    Private Function CheckWin(board(,) As Char)
+        Dim row As Integer
+        Dim column As Integer
+        For row = 0 To 9
+            For column = 0 To 9
                 If _
-                    Board(Row, Column) = "A" Or Board(Row, Column) = "B" Or Board(Row, Column) = "S" Or
-                    Board(Row, Column) = "D" Or Board(Row, Column) = "P" Then
+                    board(row, column) = "A" Or board(row, column) = "B" Or board(row, column) = "S" Or
+                    board(row, column) = "D" Or board(row, column) = "P" Then
                     Return False
                 End If
             Next
@@ -162,30 +162,30 @@ Module Module1
         Return True
     End Function
 
-    Sub PrintBoard(Board(,) As Char)
-        Dim Row As Integer
-        Dim Column As Integer
+    Private Sub PrintBoard(board(,) As Char)
+        Dim row As Integer
+        Dim column As Integer
         Console.WriteLine()
         Console.WriteLine("The board looks like this: ")
         Console.WriteLine()
         Console.Write(" ")
-        For Column = 0 To 9
-            Console.Write(" " & Column & "  ")
+        For column = 0 To 9
+            Console.Write(" " & column & "  ")
         Next
         Console.WriteLine()
-        For Row = 0 To 9
-            Console.Write(Row & " ")
-            For Column = 0 To 9
-                If Board(Row, Column) = "-" Then
+        For row = 0 To 9
+            Console.Write(row & " ")
+            For column = 0 To 9
+                If board(row, column) = "-" Then
                     Console.Write(" ")
                 ElseIf _
-                    Board(Row, Column) = "A" Or Board(Row, Column) = "B" Or Board(Row, Column) = "S" Or
-                    Board(Row, Column) = "D" Or Board(Row, Column) = "P" Then
+                    board(row, column) = "A" Or board(row, column) = "B" Or board(row, column) = "S" Or
+                    board(row, column) = "D" Or board(row, column) = "P" Then
                     Console.Write(" ")
                 Else
-                    Console.Write(Board(Row, Column))
+                    Console.Write(board(row, column))
                 End If
-                If Column <> 9 Then
+                If column <> 9 Then
                     Console.Write(" | ")
                 End If
             Next
@@ -193,7 +193,7 @@ Module Module1
         Next
     End Sub
 
-    Sub DisplayMenu()
+    Private Sub DisplayMenu()
         Console.WriteLine("MAIN MENU")
         Console.WriteLine()
         Console.WriteLine("1. Start new game")
@@ -202,63 +202,63 @@ Module Module1
         Console.WriteLine()
     End Sub
 
-    Function GetMainMenuChoice()
-        Dim Choice As Integer
+    Private Function GetMainMenuChoice()
+        Dim choice As Integer
         
         Do
             Try
                 Console.Write("Please enter your choice: ")
-                Choice = Console.ReadLine()
+                choice = Console.ReadLine()
                 Console.WriteLine()
-                Return Choice
+                Return choice
             Catch
                 Console.WriteLine("Please enter an integer")
             End Try
         Loop
     End Function
 
-    Sub PlayGame(Board(,) As Char, Ships() As TShip)
-        Dim GameWon = False
+    Private Sub PlayGame(board(,) As Char, ships() As Ship)
+        Dim gameWon As Boolean
         Do
-            PrintBoard(Board)
-            MakePlayerMove(Board, Ships)
-            GameWon = CheckWin(Board)
-            If GameWon Then
+            PrintBoard(board)
+            MakePlayerMove(board, ships)
+            gameWon = CheckWin(board)
+            If gameWon Then
                 Console.WriteLine("All ships sunk!")
                 Console.WriteLine()
             End If
-        Loop Until GameWon
+        Loop Until gameWon
     End Sub
 
-    Sub SetUpShips(ByRef Ships() As TShip)
-        Ships(0).Name = "Aircraft Carrier"
-        Ships(0).Size = 5
-        Ships(1).Name = "Battleship"
-        Ships(1).Size = 4
-        Ships(2).Name = "Submarine"
-        Ships(2).Size = 3
-        Ships(3).Name = "Destroyer"
-        Ships(3).Size = 3
-        Ships(4).Name = "Patrol Boat"
-        Ships(4).Size = 2
+    Private Sub SetUpShips(ByRef ships() As Ship)
+        ships(0).Name = "Aircraft Carrier"
+        ships(0).Size = 5
+        ships(1).Name = "Battleship"
+        ships(1).Size = 4
+        ships(2).Name = "Submarine"
+        ships(2).Size = 3
+        ships(3).Name = "Destroyer"
+        ships(3).Size = 3
+        ships(4).Name = "Patrol Boat"
+        ships(4).Size = 2
     End Sub
 
     Sub Main()
-        Dim Board(9, 9) As Char
-        Dim Ships(4) As TShip
-        Dim MenuOption As Integer
+        Dim board(9, 9) As Char
+        Dim ships(4) As Ship
+        Dim menuOption As Integer
         Do
-            SetUpBoard(Board)
-            SetUpShips(Ships)
+            SetUpBoard(board)
+            SetUpShips(ships)
             DisplayMenu()
-            MenuOption = GetMainMenuChoice()
-            If MenuOption = 1 Then
-                PlaceRandomShips(Board, Ships)
-                PlayGame(Board, Ships)
-            ElseIf MenuOption = 2 Then
-                LoadGame(TrainingGame, Board)
-                PlayGame(Board, Ships)
+            menuOption = GetMainMenuChoice()
+            If menuOption = 1 Then
+                PlaceRandomShips(board, ships)
+                PlayGame(board, ships)
+            ElseIf menuOption = 2 Then
+                LoadGame(TrainingGame, board)
+                PlayGame(board, ships)
             End If
-        Loop Until MenuOption = 9
+        Loop Until menuOption = 9
     End Sub
 End Module
