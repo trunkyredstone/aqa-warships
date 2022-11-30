@@ -180,7 +180,7 @@ Module Module1
                     Console.Write(" ")
                 ElseIf _
                     board(row, column) = "A" Or board(row, column) = "B" Or board(row, column) = "S" Or
-                    board(row, column) = "D" Or board(row, column) = "P" Then
+                    board(row, column) = "D" Or board(row, column) = "P" Or board(row, column) = "T" Then
                     If showShips Then
                         Console.Write(board(row, column))
                     Else
@@ -245,11 +245,13 @@ Module Module1
         ships(3).Size = 3
         ships(4).Name = "Patrol Boat"
         ships(4).Size = 2
+        ships(5).Name = "Tugboat"
+        ships(5).Size = 2
     End Sub
 
     Sub Main()
         Dim board(9, 9) As Char
-        Dim ships(4) As Ship
+        Dim ships(5) As Ship
         Dim menuOption As Integer
         Do
             SetUpBoard(board)
