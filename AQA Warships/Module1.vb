@@ -58,6 +58,9 @@ Module Module1
             board(row, column) = "m"
         Else
             Console.WriteLine("Hit at (" & column & "," & row & ").")
+            If GetShipCount(board, board(row, column)) Then
+                Console.WriteLine("You sunk a ship!")
+            End If
             board(row, column) = "h"
         End If
     End Sub
@@ -161,6 +164,20 @@ Module Module1
             Next
         Next
         Return True
+    End Function
+    
+    Private Function GetShipCount(board(,) As Char, ship As Char) As Integer
+        Dim row As Integer
+        Dim column As Integer
+        Dim count As Integer
+        For row = 0 To 9
+            For column = 0 To 9
+                If board(row, column) = ship Then
+                    count += 1
+                End If
+            Next
+        Next
+        Return count
     End Function
 
     Private Sub PrintBoard(board(,) As Char, showShips As Boolean)
