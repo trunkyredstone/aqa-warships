@@ -45,7 +45,7 @@ Module Module1
         Console.WriteLine()
     End Sub
 
-    Private Sub MakePlayerMove(ByRef board(,) As Char, ByRef ships() As Ship)
+    Private Sub MakePlayerMove(ByRef board(,) As Char, ByRef ships() As Ship, ByRef misses As Integer)
         Dim row As Integer
         Dim column As Integer
         GetRowColumn(row, column, board)
@@ -54,6 +54,7 @@ Module Module1
                 "Sorry, you have already shot at the square (" & column & "," & row & "). Please try again.")
         ElseIf board(row, column) = "-" Then
             Console.WriteLine("Sorry, (" & column & "," & row & ") is a miss.")
+            misses += 1
             board(row, column) = "m"
         Else
             Console.WriteLine("Hit at (" & column & "," & row & ").")
@@ -222,16 +223,21 @@ Module Module1
     End Function
 
     Private Sub PlayGame(board(,) As Char, ships() As Ship, showShips As Boolean)
-        Dim gameWon As Boolean
+        Dim gameDone As Boolean
+        Dim misses As Integer
         Do
             PrintBoard(board, showShips)
-            MakePlayerMove(board, ships)
-            gameWon = CheckWin(board)
-            If gameWon Then
+            MakePlayerMove(board, ships, misses)
+            gameDone = CheckWin(board)
+            If gameDone Then
                 Console.WriteLine("All ships sunk!")
                 Console.WriteLine()
+            ElseIf misses >= 5 Then
+                Console.WriteLine("You missed 5 times! Game over!")
+                Console.WriteLine()
+                gameDone = True
             End If
-        Loop Until gameWon
+        Loop Until gameDone
     End Sub
 
     Private Sub SetUpShips(ByRef ships() As Ship)
