@@ -59,7 +59,13 @@ Module Module1
         Else
             Console.WriteLine("Hit at (" & column & "," & row & ").")
             If GetShipCount(board, board(row, column)) Then
-                Console.WriteLine("You sunk a ship!")
+                Dim hitShip As String
+                For Each ship In ships
+                    If board(row, column) = ship.Name(0) Then
+                        hitShip = ship.Name
+                    End If
+                Next
+                Console.WriteLine("You sunk a {0}!", hitShip)
             End If
             board(row, column) = "h"
         End If
