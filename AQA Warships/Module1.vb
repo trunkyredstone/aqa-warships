@@ -9,7 +9,7 @@ Imports System.IO
 Module Module1
     Const TrainingGame As String = "Training.txt"
 
-    Structure Ship
+    Private Structure Ship
         Dim Name As String
         Dim Size As Integer
     End Structure
