@@ -101,21 +101,26 @@ Module Module1
         Dim column As Integer
         Dim orientation As Char
         Dim horV As Integer
+        Dim amount As Integer
         For Each Ship In ships
-            valid = False
-            While Not valid
-                row = Int(Rnd()*10)
-                column = Int(Rnd()*10)
-                horV = Int(Rnd()*2)
-                If horV = 0 Then
-                    orientation = "v"
-                Else
-                    orientation = "h"
-                End If
-                valid = ValidateBoatPosition(board, Ship, row, column, orientation)
-            End While
-            Console.WriteLine("Computer placing the " & Ship.Name)
-            PlaceShip(board, Ship, row, column, orientation)
+            amount = Int(Rnd()*2)
+            
+            For i = 0 To amount
+                valid = False
+                While Not valid
+                    row = Int(Rnd()*10)
+                    column = Int(Rnd()*10)
+                    horV = Int(Rnd()*2)
+                    If horV = 0 Then
+                        orientation = "v"
+                    Else
+                        orientation = "h"
+                    End If
+                    valid = ValidateBoatPosition(board, Ship, row, column, orientation)
+                End While
+                Console.WriteLine("Computer placing the " & Ship.Name)
+                PlaceShip(board, Ship, row, column, orientation)
+            Next
         Next
     End Sub
 
@@ -279,6 +284,8 @@ Module Module1
     End Sub
 
     Sub Main()
+        Randomize()
+        
         Dim board(9, 9) As Char
         Dim ships(5) As Ship
         Dim menuOption As Integer
