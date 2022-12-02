@@ -8,6 +8,7 @@ Imports System.IO
 
 Module Module1
     Const TrainingGame As String = "Training.txt"
+    Const BoardSize As Integer = 10
 
     Private Structure Ship
         Dim Name As String
@@ -286,7 +287,7 @@ Module Module1
     Sub Main()
         Randomize()
         
-        Dim board(9, 9) As Char
+        Dim board(BoardSize, BoardSize) As Char
         Dim ships(5) As Ship
         Dim menuOption As Integer
         Do
